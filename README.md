@@ -1,1 +1,2 @@
 # ZodiacScope
+this app is intended to simply show how easy it is for scammers to gain access to a users device. None of the permissions here avtually transmit any date, user will press the Reveal Horoscope button then be asked for permissions, and then an educational message will appear. I made this with AI, and cannot verify the links provided. I am just a regular person, imagine what someone with malintent could actually do if i can do this is 30 minutes. 
