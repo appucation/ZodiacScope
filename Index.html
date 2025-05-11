@@ -2,128 +2,63 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ZodiacScope – Horoscope & Privacy Awareness</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZodiacScope</title>
   <style>
     body {
-      font-family: "Georgia", serif;
-      background: linear-gradient(to bottom, #fff0f5, #e6e6fa);
-      color: #333;
+      font-family: 'Arial', sans-serif;
       text-align: center;
-      padding: 2rem;
-    }
-    h1 {
-      color: #5a3e85;
-    }
-    button {
-      background-color: #8a2be2;
+      padding: 50px;
+      background: linear-gradient(to right, #2c3e50, #3498db);
       color: white;
+    }
+    #revealButton {
+      padding: 15px 30px;
+      font-size: 18px;
+      background-color: #f39c12;
       border: none;
-      padding: 12px 24px;
-      font-size: 1.2rem;
+      border-radius: 5px;
       cursor: pointer;
-      border-radius: 6px;
-      margin-top: 1rem;
     }
-    #map {
-      width: 100%;
-      height: 400px;
-      margin-top: 30px;
-      border: 2px solid #ccc;
-    }
-    .warning {
-      color: #c00;
-      font-weight: bold;
-      margin-top: 20px;
-    }
-    .final-message {
-      margin-top: 30px;
-      padding: 1rem;
-      background: #fff8dc;
-      border: 2px dashed #a0522d;
-      font-weight: bold;
-      color: #333;
-    }
-    footer {
+    #message {
       margin-top: 40px;
-      font-size: 0.9rem;
-      color: #666;
-    }
-    a {
-      color: #5a3e85;
+      font-size: 20px;
     }
   </style>
 </head>
 <body>
-
   <h1>ZodiacScope</h1>
-  <p>Welcome to your cosmic forecast. Your future awaits... but so do the permissions.</p>
-  <p>Click the button below to reveal your horoscope.</p>
-  <button onclick="requestPermissions()">Reveal Horoscope</button>
-
-  <div id="map"></div>
-  <p class="warning" id="warning"></p>
-  <div class="final-message" id="finalMessage" style="display:none;"></div>
-
-  <footer>
-    <p>This demo was created to raise awareness about digital privacy and scam prevention.</p>
-    <p>Useful links:
-      <a href="https://consumer.ftc.gov/articles/how-recognize-and-avoid-phishing-scams" target="_blank">FTC Scam Prevention</a> |
-      <a href="https://haveibeenpwned.com/" target="_blank">Check if Your Info Was Leaked</a>
-    </p>
-  </footer>
+  <p>Find out what the stars have in store for you today.</p>
+  <button id="revealButton">Reveal Horoscope</button>
+  <div id="message"></div>
 
   <script>
-    function requestPermissions() {
-      // Request location
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
-      }
+    const button = document.getElementById('revealButton');
+    const message = document.getElementById('message');
 
-      // Request camera and mic
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-          stream.getTracks().forEach(track => track.stop()); // Immediately stop to show we don't use it
-          showFinalMessage(true);
-        })
-        .catch(err => {
-          console.warn("Camera/Mic permission denied or error:", err);
-          showFinalMessage(false);
+    button.addEventListener('click', async () => {
+      try {
+        // Request geolocation
+        await new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
         });
-    }
 
-    function showPosition(position) {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-      const mapFrame = `<iframe
-        width="100%"
-        height="400"
-        frameborder="0"
-        style="border:0"
-        src="https://www.google.com/maps?q=${lat},${lon}&hl=es;z=14&output=embed"
-        allowfullscreen>
-      </iframe>`;
-      document.getElementById("map").innerHTML = mapFrame;
-      document.getElementById("warning").innerText =
-        "This is your real location. It was shared instantly after one click.";
-    }
+        // Request camera and mic access
+        await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-    function showError(error) {
-      document.getElementById("warning").innerText = "Location access was denied or unavailable.";
-      showFinalMessage(false);
-    }
-
-    function showFinalMessage(cameraAllowed) {
-      const messageBox = document.getElementById("finalMessage");
-      messageBox.style.display = "block";
-      messageBox.innerHTML = `
-        <p>Recognize how easy that was?</p>
-        <p><strong>No data was collected</strong> by ZodiacScope. This was only a demonstration.</p>
-        <p>But there are <strong>millions of fake apps</strong> that do ask for permissions—then secretly collect and sell your information.</p>
-        <p>Always review the permissions you grant. If an app doesn’t need camera, mic, or location, don’t allow it.</p>
-      `;
-    }
+        // Display final message
+        message.innerHTML = `
+          <strong>Warning:</strong><br><br>
+          You just granted this fake horoscope app access to your location, camera, and microphone.
+          <br><br>
+          This was a safe demo—<em>ZodiacScope</em> did <strong>not</strong> collect or send any data.<br><br>
+          But real fake apps exist, and many do exploit these permissions silently.
+          <br><br>
+          Always check what apps are asking for and why. If I could build this in under 30 minutes using AI, imagine what someone with bad intentions could do.
+        `;
+      } catch (error) {
+        message.textContent = "Permission was denied or an error occurred. That's okay—better safe than sorry!";
+      }
+    });
   </script>
-
 </body>
 </html>
